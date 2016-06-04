@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DC Great Streets</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- this sample uses leaflet and is built from online samples for leaflet.js-->
+    <!--more samples available here: http://leafletjs.com/examples.html -->
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <!-- link to Great Streets Corridors on DC Open Data -->
+    <link rel="greatstreets" type="application/json" href="http://opendata.dc.gov/datasets/2ccac3f2585f487c9d14919d02d66740_13.geojson">
+    <style>
+
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>DC Great Streets </h1>
+    <h2>Leaflet / Open Street Map Starter </h2>
+    <div id="map" style="width: 700px; height: 800px"></div>
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script>
+
+        //Basemap reference from OpenStreetMap (OSM)
+        var baseTiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+                                '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+        });
+
+        //set the style for the great streets polygons
+        function style(feature) {
+            return {
+                fillColor: '#41b6c4',
+                weight: 2,
+                opacity: 0.5,
+                color: 'black',
+                fillOpacity: 0.3
+            };
+        }
+
+        //bind the popups to the map features
+        $.getJSON($('link[rel="greatstreets"]').attr("href"), function (data) {
+            var geojson = L.geoJson(data, {
+                style: style,
+                onEachFeature: function (feature, layer) {
+                    layer.bindPopup(feature.properties.NAME)
+                }
+            });
+
+            //load the map and set the default map center
+            var map = L.map('map').setView([38.8929, -77.0252], 12);
+            baseTiles.addTo(map);
+            geojson.addTo(map);
+        });
+
+    </script>
+</body>
+</html>
